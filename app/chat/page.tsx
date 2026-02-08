@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [profileCreating, setProfileCreating] = useState(false);
+  const [profileReady, setProfileReady] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -42,7 +44,7 @@ export default function ChatPage() {
         id: "1",
         role: "assistant",
         content:
-          "Hey! 👋 Great to meet you! I'm here to learn about your interests so we can create your profile and connect you with amazing people. Tell me about yourself—what do you enjoy? Your hobbies, likes, dislikes, anything that makes you, you!",
+          "Hey! 👋 What do you enjoy—hobbies, likes, or things you’d rather avoid? One short answer is enough.",
       },
     ]);
   }, [router]);
@@ -85,8 +87,13 @@ export default function ChatPage() {
 
       if (data.profileReady) {
         setProfileCreating(true);
-        await createProfile(userId!, userMessage.content);
-        router.push("/profile");
+        await createProfile(userId!, userMessage.content, [
+          ...messages,
+          userMessage,
+          { id: "", role: "assistant" as const, content: data.reply },
+        ]);
+        setProfileCreating(false);
+        setProfileReady(true);
       }
     } catch (err) {
       console.error(err);
@@ -104,7 +111,11 @@ export default function ChatPage() {
     }
   };
 
-  const createProfile = async (userId: string, lastMessage: string) => {
+  const createProfile = async (
+    userId: string,
+    lastMessage: string,
+    fullMessages: Message[]
+  ) => {
     try {
       await fetch("/api/profile/create", {
         method: "POST",
@@ -112,7 +123,7 @@ export default function ChatPage() {
         body: JSON.stringify({
           userId,
           lastMessage,
-          chatHistory: messages.map((m) => ({ role: m.role, content: m.content })),
+          chatHistory: fullMessages.map((m) => ({ role: m.role, content: m.content })),
         }),
       });
     } catch (err) {
@@ -149,9 +160,15 @@ export default function ChatPage() {
                 }`}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </p>
+                  {msg.role === "assistant" ? (
+                    <div className="text-sm leading-relaxed [&_p]:my-1.5 [&_p:first-child]:mt-0 [&_strong]:font-semibold">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -170,16 +187,26 @@ export default function ChatPage() {
             </div>
           )}
           {profileCreating && (
-            <div className="flex flex-col items-center justify-center py-12 gap-4">
-              <div className="w-16 h-16 rounded-full border-4 border-violet-200 border-t-violet-600 animate-spin" />
-              <p className="text-lg font-semibold">Creating your profile...</p>
-              <p className="text-muted-foreground">Almost there!</p>
+            <div className="flex flex-col items-center justify-center py-6 gap-2">
+              <div className="w-10 h-10 rounded-full border-4 border-violet-200 border-t-violet-600 animate-spin" />
+              <p className="text-sm text-muted-foreground">Saving your profile...</p>
+            </div>
+          )}
+          {profileReady && !profileCreating && (
+            <div className="flex flex-col items-center py-6 gap-4">
+              <p className="text-sm text-muted-foreground">Profile saved. Pick categories next.</p>
+              <Button
+                onClick={() => router.push("/categories")}
+                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+              >
+                Go to categories
+              </Button>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {!profileCreating && (
+        {!profileReady && !profileCreating && (
           <div className="flex gap-2 pt-4">
             <Input
               placeholder="Tell me about your interests..."

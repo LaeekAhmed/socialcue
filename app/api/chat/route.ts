@@ -14,28 +14,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const systemPrompt = `You are a friendly AI assistant helping someone create their SocialCue profile. Your job is to:
-1. Chat naturally and ask about their interests, hobbies, likes, dislikes
-2. Keep responses concise (2-4 sentences max)
-3. After they've shared enough (e.g., 3-4 exchanges with meaningful content about interests), say you have enough info
-4. When you have enough info, your last message should end with exactly: [PROFILE_READY]
-5. Be warm and encouraging
+    const systemPrompt = `You are a friendly AI helping someone create their SocialCue profile. Be brief.
+1. Ask ONE short question to learn their main interests, likes, and dislikes (e.g. "What do you enjoy? Any likes or dislikes?").
+2. Keep every reply to 1-2 short sentences.
+3. As soon as they share anything substantive (interests, hobbies, likes, or dislikes), thank them briefly and end your message with exactly: [PROFILE_READY]
+4. Do not drag the conversation out. One good answer is enough.`;
 
-Only end with [PROFILE_READY] when they've shared interests, likes/dislikes, or hobbies.`;
-
-    const chatHistory = history.map((h: { role: string; content: string }) => ({
+    let chatHistory = history.map((h: { role: string; content: string }) => ({
       role: h.role === "user" ? "user" : "model",
       parts: [{ text: h.content }],
     }));
 
+    // Gemini requires first message to be from user; prepend placeholder if LLM started the chat
+    const trimmed = chatHistory.slice(-10);
+    if (trimmed.length > 0 && trimmed[0].role === "model") {
+      chatHistory = [
+        { role: "user" as const, parts: [{ text: "(Start)" }] },
+        ...trimmed,
+      ];
+    } else {
+      chatHistory = trimmed;
+    }
+
     const chat = model.startChat({
-      history: chatHistory.slice(-10),
+      history: chatHistory,
     });
 
     const result = await chat.sendMessage(
-      chatHistory.length === 0
+      history.length === 0
         ? `${systemPrompt}\n\nStart the conversation. User's first message: ${message}`
         : message
     );

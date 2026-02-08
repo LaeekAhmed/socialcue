@@ -33,7 +33,7 @@ export async function POST(request: Request) {
           .join(" ")
       : lastMessage || "";
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     const result = await model.generateContent(
       `From this conversation where the user talked about themselves, extract keywords for their profile. Return ONLY a JSON object with these exact keys: interests (array of strings), likes (array of strings), dislikes (array of strings). Example: {"interests":["tennis","hiking","reading"],"likes":["coffee","movies"],"dislikes":["crowds"]}. User's messages: "${userMessages}"`
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         dislikes = Array.isArray(parsed.dislikes) ? parsed.dislikes : [];
       }
     } catch {
-      interests = lastMessage.split(/[\s,]+/).filter((w) => w.length > 2).slice(0, 5);
+      interests = lastMessage.split(/[\s,]+/).filter((w: string) => w.length > 2).slice(0, 5);
     }
 
     await prisma.user.update({

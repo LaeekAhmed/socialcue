@@ -8,15 +8,30 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  auth0Sub    String?       @unique
-  name        String?
-  age         Int?
-  gender      String?
-  location    String?
-  createdAt   DateTime      @default(now())
-  UserMessage UserMessage[]
-  UserProfile UserProfile?
+  id               String            @id @default(cuid())
+  auth0Sub         String?           @unique
+  name             String?
+  age              Int?
+  gender           String?
+  location         String?
+  interests        String[]          @default([])
+  likes            String[]          @default([])
+  dislikes         String[]          @default([])
+  profileReady     Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  UserMessage      UserMessage[]
+  UserProfile      UserProfile?
+  ActivityRequest  ActivityRequest[]
+}
+
+model ActivityRequest {
+  id                String   @id @default(cuid())
+  userId            String
+  sport             String
+  status            String   // "searching" | "matched"
+  matchedWithUserId String?
+  createdAt         DateTime @default(now())
+  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Match {
