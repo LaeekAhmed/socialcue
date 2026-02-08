@@ -37,7 +37,7 @@ export function BadgeCollection({ achievements, onBack }: BadgeCollectionProps) 
 
             <main className="flex-1 overflow-y-auto px-6 py-6">
                 {/* Progress Card */}
-                <div className="mb-8 rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 p-6 text-white shadow-lg">
+                <div className="mb-8 rounded-3xl bg-gradient-to-br from-violet-300 to-fuchsia-300 p-6 text-white shadow-lg">
                     <div className="mb-4 flex items-end justify-between">
                         <div>
                             <h2 className="text-2xl font-bold">Level {Math.floor(unlockedCount / 3) + 1}</h2>

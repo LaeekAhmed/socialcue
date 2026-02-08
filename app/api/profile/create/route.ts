@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         .join(" ")
       : lastMessage || "";
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+    const model = genAI.getGenerativeModel({ model: "gemma-3-27b-it" });
 
     const result = await model.generateContent(
       `From this conversation where the user talked about themselves, extract keywords for their profile. Return ONLY a JSON object with these exact keys: interests (array of strings), likes (array of strings), dislikes (array of strings). Example: {"interests":["tennis","hiking","reading"],"likes":["coffee","movies"],"dislikes":["crowds"]}. User's messages: "${userMessages}"`

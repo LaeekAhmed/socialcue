@@ -40,6 +40,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       matchName: otherUser.name,
       meetLocation: meet.meetLocation,
+      matchUserId: otherUser.id,
     });
   } catch (error) {
     console.error("Status fetch error:", error);

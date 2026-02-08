@@ -2,10 +2,12 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Dumbbell, HeartHandshake, User } from "lucide-react";
+import { Users, Dumbbell, HeartHandshake } from "lucide-react";
 import Link from "next/link";
+import { BackLink } from "@/components/back-link";
+import { ProfileButton } from "@/components/profile-button";
+import { ChatPreferencesButton } from "@/components/chat-preferences-button";
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function CategoriesPage() {
       description: "Connect with strangers nearby—similar interests or surprise me for a random match",
       icon: Users,
       href: "/meet",
-      gradient: "from-violet-500 to-fuchsia-500",
+      gradient: "from-violet-400 to-fuchsia-400",
       shadow: "shadow-violet-500/30",
     },
     {
@@ -45,27 +47,16 @@ export default function CategoriesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50">
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="space-y-6 animate-fade-in">
-          <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border mb-6">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                Explore
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Choose a category
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 flex flex-col">
+      <div className="max-w-2xl mx-auto p-6 w-full flex-1 flex flex-col">
+        <div className="space-y-6 animate-fade-in flex-1">
+          <div className="flex items-center justify-between gap-3 pb-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl font-bold text-foreground sm:text-2xl truncate">Explore</h1>
+              <p className="text-muted-foreground text-sm truncate">Choose a category</p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" asChild className="rounded-full">
-                <Link href="/profile">
-                  <User className="mr-2 h-4 w-4" /> Profile
-                </Link>
-              </Button>
-            </div>
+            <ProfileButton />
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
               <Link key={cat.href} href={cat.href} className="block h-full">
@@ -89,12 +80,10 @@ export default function CategoriesPage() {
               </Link>
             ))}
           </div>
-
-          <Link href="/" className="block text-center text-sm text-muted-foreground hover:text-foreground">
-            Back to home
-          </Link>
         </div>
       </div>
+      <BackLink href="/" label="home" />
+      <ChatPreferencesButton />
     </div>
   );
 }

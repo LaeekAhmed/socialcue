@@ -58,6 +58,12 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+  /* Slightly larger base font on mobile for readability */
+  @media (max-width: 768px) {
+    html {
+      font-size: 18px;
+    }
+  }
 }
 
 @keyframes fade-in {

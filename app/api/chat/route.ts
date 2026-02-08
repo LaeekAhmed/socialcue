@@ -14,29 +14,39 @@ export async function POST(request: Request) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+    const systemPrompt = `You are a friendly onboarding bot. CRITICAL RULES:
+- Ask EXACTLY ONE simple question per message
+- Maximum 1 sentence. No explanations, no multiple questions, no lists
+- Be direct and conversational
+- After 3-4 user responses, end with: [PROFILE_READY]
 
-    const systemPrompt = `You are a friendly onboarding bot. Ask exactly ONE short question per message. Rules:
-1. One question only, 1-2 sentences max. No long intros or yapping.
-2. Ask about: interests/hobbies, then likes, then dislikes (3-4 questions total).
-3. After the user has answered 3-4 questions, your next reply must end with exactly: [PROFILE_READY]
-4. When ending, say something like "Got it, we're all set!" then [PROFILE_READY] on the same line.
+Examples of GOOD questions:
+"What are your hobbies?"
+"What do you like?"
+"Anything you dislike?"
 
-Example flow: "What are your top 2–3 hobbies or interests?" → user answers → "What do you like? (e.g. coffee, movies)" → → "Anything you dislike?" → "Got it! [PROFILE_READY]"`;
+Examples of BAD questions (DO NOT DO THIS):
+"What are your hobbies? Also, what do you like? And tell me about your dislikes."
+"I'd love to know more about you. Could you share your hobbies, interests, and what you enjoy doing?"
+"Tell me about your hobbies, likes, and dislikes."`;
+
+    const model = genAI.getGenerativeModel({ model: "gemma-3-27b-it" });
 
     let chatHistory = history.map((h: { role: string; content: string }) => ({
       role: h.role === "user" ? "user" : "model",
       parts: [{ text: h.content }],
     }));
 
+    const isNewChat = chatHistory.length === 0;
+    
     // Gemini requires first message to be from user; prepend placeholder if LLM started the chat
     const trimmed = chatHistory.slice(-10);
     if (trimmed.length > 0 && trimmed[0].role === "model") {
       chatHistory = [
-        { role: "user" as const, parts: [{ text: "(Start)" }] },
+        { role: "user" as const, parts: [{ text: `${systemPrompt}\n\n(Start)` }] },
         ...trimmed,
       ];
-    } else {
+    } else if (!isNewChat) {
       chatHistory = trimmed;
     }
 
@@ -54,14 +64,37 @@ Example flow: "What are your top 2–3 hobbies or interests?" → user answers �
       history: chatHistory,
     });
 
-    const result = await chat.sendMessage(
-      history.length === 0
-        ? `${systemPrompt}\n\nStart the conversation. User's first message: ${message}`
-        : message
-    );
+    // Include instruction: prepend for new chat, add reminder for follow-ups
+    const messageToSend = isNewChat 
+      ? `${systemPrompt}\n\nUser: ${message}`
+      : `Remember: Ask ONE short question only (max 1 sentence). User said: ${message}`;
+
+    const result = await chat.sendMessage(messageToSend);
 
     const response = result.response;
-    const text = response.text();
+    let text = response.text();
+
+    // Post-process to ensure single question: take first sentence/question only
+    // Remove multiple questions, keep only the first one
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    if (sentences.length > 1) {
+      // If multiple sentences, take only the first question
+      const firstQuestion = sentences.find(s => s.trim().match(/^[^.!]*\?/)) || sentences[0];
+      text = firstQuestion.trim() + (firstQuestion.includes('?') ? '' : '?');
+    } else if (sentences.length === 1 && !text.includes('?') && !text.includes('[PROFILE_READY]')) {
+      // If single sentence without question mark, add one if it's not ending
+      text = text.trim() + '?';
+    }
+
+    // Limit length: if still too long, truncate at first question mark or 50 chars
+    if (text.length > 80) {
+      const firstQ = text.indexOf('?');
+      if (firstQ > 0 && firstQ < 80) {
+        text = text.substring(0, firstQ + 1);
+      } else {
+        text = text.substring(0, 77) + '...';
+      }
+    }
 
     const profileReady = text.includes("[PROFILE_READY]");
     const reply = text.replace(/\[PROFILE_READY\]/g, "").trim();

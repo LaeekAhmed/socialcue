@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bot, Send } from "lucide-react";
+import { BackLink } from "@/components/back-link";
+import { ProfileButton } from "@/components/profile-button";
 
 interface Message {
   id: string;
@@ -155,20 +157,20 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 flex flex-col">
-      <div className="flex-1 max-w-2xl mx-auto w-full p-6 flex flex-col">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+      <div className="flex-1 max-w-2xl mx-auto w-full p-6 flex flex-col min-h-0">
+        <div className="flex items-center justify-between gap-3 pb-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl font-bold truncate sm:text-2xl">Let&apos;s get to know you</h1>
+            <p className="text-muted-foreground text-sm truncate">Share your interests, likes & dislikes</p>
+          </div>
+          <ProfileButton />
+        </div>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center shrink-0">
             <Bot className="w-6 h-6 text-white" />
           </div>
-          <div>
-            <h1 className="text-xl font-bold">Let&apos;s get to know you</h1>
-            <p className="text-sm text-muted-foreground">
-              Share your interests, likes & dislikes
-            </p>
-          </div>
         </div>
-
-        <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+        <div className="flex-1 overflow-y-auto space-y-4 pb-4 min-h-0">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -177,7 +179,7 @@ export default function ChatPage() {
               <Card
                 className={`max-w-[85%] ${
                   msg.role === "user"
-                    ? "bg-violet-600 text-white border-violet-600"
+                    ? "bg-violet-500 text-white border-violet-500"
                     : "bg-card border-violet-100"
                 }`}
               >
@@ -210,8 +212,8 @@ export default function ChatPage() {
           )}
           {profileCreating && (
             <div className="flex flex-col items-center justify-center py-6 gap-2">
-              <div className="w-10 h-10 rounded-full border-4 border-violet-200 border-t-violet-600 animate-spin" />
-              <p className="text-sm text-muted-foreground">Saving your profile...</p>
+              <div className="w-10 h-10 rounded-full border-4 border-violet-200 border-t-violet-500 animate-spin" />
+              <p className="text-sm text-muted-foreground">Updating your profile...</p>
             </div>
           )}
           {showNextButton && !profileCreating && (
@@ -219,7 +221,7 @@ export default function ChatPage() {
               <p className="text-sm text-muted-foreground">Profile saved. Pick categories next.</p>
               <Button
                 onClick={() => router.push("/categories")}
-                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                className="bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600"
               >
                 Go to categories
               </Button>
@@ -232,7 +234,7 @@ export default function ChatPage() {
           <div className="flex flex-col gap-3 pt-4">
             {showNextButton ? (
               <Button
-                className="w-full h-14 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600"
+                className="w-full h-14 text-lg bg-gradient-to-r from-violet-500 to-fuchsia-500"
                 onClick={createProfile}
                 disabled={profileCreating}
               >
@@ -256,6 +258,7 @@ export default function ChatPage() {
           </div>
         )}
       </div>
+      <BackLink href="/" label="home" />
     </div>
   );
 }

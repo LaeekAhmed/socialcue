@@ -3,27 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeartHandshake, Construction } from "lucide-react";
-import Link from "next/link";
+import { BackLink } from "@/components/back-link";
+import { ProfileButton } from "@/components/profile-button";
+import { ChatPreferencesButton } from "@/components/chat-preferences-button";
 
 export default function CommunityPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
-      <div className="max-w-lg mx-auto p-6">
-        <Link
-          href="/categories"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
-        >
-          ← Back to Categories
-        </Link>
-
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex flex-col">
+      <div className="max-w-lg mx-auto p-6 w-full flex-1 flex flex-col">
+        <div className="flex items-center justify-between gap-3 pb-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl font-bold truncate sm:text-2xl">Community Service</h1>
+            <p className="text-muted-foreground text-sm truncate">Volunteer together with like-minded people</p>
+          </div>
+          <ProfileButton />
+        </div>
         <div className="space-y-6 animate-fade-in">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30 shrink-0">
               <HeartHandshake className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Community Service</h1>
-              <p className="text-muted-foreground">Volunteer together with like-minded people</p>
             </div>
           </div>
 
@@ -44,15 +42,12 @@ export default function CommunityPage() {
                 Soon you&apos;ll be able to find volunteer opportunities and connect with
                 people who want to make a difference together.
               </p>
-              <Link href="/categories">
-                <Button variant="outline" className="w-full">
-                  Back to Categories
-                </Button>
-              </Link>
             </CardContent>
           </Card>
         </div>
       </div>
+      <BackLink href="/categories" label="Categories" />
+      <ChatPreferencesButton />
     </div>
   );
 }

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, PartyPopper } from "lucide-react";
-import Link from "next/link";
+import { BackLink } from "@/components/back-link";
+import { ProfileButton } from "@/components/profile-button";
+import { ChatPreferencesButton } from "@/components/chat-preferences-button";
 
 export default function ActivitiesConnectedPage() {
   const router = useRouter();
@@ -44,8 +45,12 @@ export default function ActivitiesConnectedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex flex-col items-center justify-center p-6">
-      <div className="max-w-md w-full space-y-6 animate-fade-in text-center">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex flex-col">
+      <div className="max-w-2xl mx-auto p-6 w-full flex-1 flex flex-col">
+        <div className="flex justify-end pb-4">
+          <ProfileButton />
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full space-y-6 animate-fade-in text-center">
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-xl shadow-emerald-500/30 mb-4">
           <PartyPopper className="w-10 h-10 text-white" />
         </div>
@@ -66,13 +71,10 @@ export default function ActivitiesConnectedPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Link href="/categories">
-          <Button variant="outline" className="w-full">
-            Back to Categories
-          </Button>
-        </Link>
+        </div>
       </div>
+      <BackLink href="/categories" label="Categories" />
+      <ChatPreferencesButton />
     </div>
   );
 }

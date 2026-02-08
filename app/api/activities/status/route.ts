@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
     const activity = await prisma.activityRequest.findUnique({
       where: { id: requestId },
-      include: { user: true },
+      include: { User: true },
     });
 
     if (!activity) {
@@ -65,8 +65,8 @@ export async function GET(request: Request) {
         };
         payload.matchName = matchUser.name ?? "Someone nearby";
       }
-      const meetLocation = activity.user.location
-        ? `Near ${activity.user.location} - find a ${activity.sport} venue`
+      const meetLocation = activity.User?.location
+        ? `Near ${activity.User.location} - find a ${activity.sport} venue`
         : `Find a ${activity.sport} venue near you`;
       payload.meetLocation = meetLocation;
     }

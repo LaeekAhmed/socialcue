@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, MapPin, Heart, ThumbsDown, Sparkles } from "lucide-react";
+import { BackLink } from "@/components/back-link";
+import { ProfileButton } from "@/components/profile-button";
+import { ChatPreferencesButton } from "@/components/chat-preferences-button";
 
 interface ProfileData {
   id: string;
@@ -54,15 +57,15 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-fuchsia-50">
-        <div className="w-16 h-16 rounded-full border-4 border-violet-200 border-t-violet-600 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-50">
+        <div className="w-16 h-16 rounded-full border-4 border-blue-200 border-t-blue-500 animate-spin" />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-50 p-6">
         <h1 className="text-2xl font-bold mb-4">Profile Not Found</h1>
         <p className="text-muted-foreground mb-6">We couldn't find your profile details.</p>
         <Button onClick={() => router.push("/")} className="w-full max-w-xs">
@@ -73,23 +76,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50">
-      <div className="max-w-lg mx-auto p-6">
-        <div className="space-y-6 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex flex-col">
+      <div className="max-w-lg mx-auto p-6 w-full flex-1 flex flex-col">
+        <div className="flex items-center justify-between gap-3 pb-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl font-bold truncate sm:text-2xl">Your Profile is Ready!</h1>
+            <p className="text-muted-foreground text-sm truncate">Here&apos;s what we learned about you</p>
+          </div>
+        </div>
+        <div className="space-y-6 animate-fade-in flex-1">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-sky-500 flex items-center justify-center shadow-lg shadow-blue-400/25 shrink-0">
               <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Your Profile is Ready!</h1>
-              <p className="text-muted-foreground">Here&apos;s what we learned about you</p>
             </div>
           </div>
 
-          <Card className="border-2 border-violet-100 shadow-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10">
+          <Card className="border-2 border-blue-100 shadow-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-blue-100/80 to-sky-100/80">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-sky-500 flex items-center justify-center">
                   <User className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -108,14 +113,14 @@ export default function ProfilePage() {
               {profile.interests.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-violet-500" />
+                    <Sparkles className="w-4 h-4 text-blue-500" />
                     Interests
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.interests.map((i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 rounded-lg bg-violet-100 text-violet-800 text-sm font-medium"
+                        className="px-3 py-1 rounded-lg bg-blue-100 text-blue-800 text-sm font-medium"
                       >
                         {i}
                       </span>
@@ -164,7 +169,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-col gap-3">
             <Button
-              className="w-full h-14 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 shadow-lg shadow-violet-500/30"
+              className="w-full h-14 text-lg bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 shadow-lg shadow-blue-400/25"
               onClick={() => router.push("/categories")}
             >
               Continue to Categories
@@ -179,6 +184,8 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      <BackLink href="/categories" label="Categories" />
+      <ChatPreferencesButton />
     </div>
   );
 }

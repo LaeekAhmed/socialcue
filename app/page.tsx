@@ -36,10 +36,10 @@ export default async function HomePage() {
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="max-w-md w-full space-y-8 animate-fade-in">
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-xl shadow-violet-500/30 mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-300 to-fuchsia-300 shadow-xl shadow-violet-300/25 mb-4">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
               SocialCue
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -57,12 +57,12 @@ export default async function HomePage() {
             <CardContent>
               <Button
                 asChild
-                className="w-full h-14 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 shadow-lg shadow-violet-500/30"
+                className="w-full h-14 text-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 shadow-lg shadow-violet-300/25"
               >
                 <a href="/auth/login?screen_hint=signup">Get Started</a>
               </Button>
               <div className="mt-4 text-center">
-                <a href="/auth/login" className="text-sm text-violet-600 hover:underline">
+                <a href="/auth/login" className="text-sm text-violet-500 hover:underline">
                   Already have an account? Login
                 </a>
               </div>
