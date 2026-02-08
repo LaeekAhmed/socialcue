@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(cuid())
+  auth0Sub    String?       @unique
+  name        String?
+  age         Int?
+  gender      String?
+  location    String?
+  createdAt   DateTime      @default(now())
+  UserMessage UserMessage[]
+  UserProfile UserProfile?
+}
+
+model Match {
+  id        String   @id
+  userA     String
+  userB     String
+  reason    Json
+  createdAt DateTime @default(now())
+}
+
+model UserMessage {
+  id        String   @id
+  userId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserProfile {
+  userId    String   @id
+  profile   Json
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
